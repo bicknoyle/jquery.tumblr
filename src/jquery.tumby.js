@@ -78,6 +78,26 @@ $.fn.tumby = function(o)
         o.relative_time = format_relative_time(extract_relative_time(Date.parse(o.date)));
         o.reblog_url = 'http://www.tumblr.com/reblog/'+o.id+'/'+o.reblog_key;
 
+        switch( o.type ) {
+            case 'link': {
+                o.body = '<div class="link"><a href="'+o.link_url+'" target="_blank">'+o.link_text+'</a></div>'+o.link_description;
+                break;
+            }
+            case 'photo': {
+                o.body = '<div class="photo"><img src="'+o.photo_url_400+'" alt="" /></div>'+o.photo_caption;
+                break;
+            }
+            case 'quote': {
+                o.body = '<div class="quote">'+o.quote_text+'</div>'+o.quote_source;
+                break;
+            }
+            case 'regular':
+            case 'text': {
+                o.body = '<div class="text">'+o.regular_title+'</div>'+o.regular_body;
+                break;
+            }
+        }
+
         return o;
     }
 
