@@ -96,6 +96,9 @@ $.fn.tumby = function(o)
                 o.body = '<div class="text">'+o.regular_title+'</div>'+o.regular_body;
                 break;
             }
+            default: {
+                o.body = '';
+            }
         }
 
         return o;
