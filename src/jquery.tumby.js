@@ -83,24 +83,18 @@ $.fn.tumby = function(o)
 
     function load(widget)
     {
-        $.ajax({
-            url: 'http://'+s.hostname+'/api/read/json',
-            data: s.options,
-            dataType: 'script',
-            success: function(data)
-            {
-                var list = $('<ul class="post_list">');
-                var posts = $.map(tumblr_api_read.posts, prepare_template_data);
-                //posts = $.grep(posts, s.filter).sort(s.comparator).slice(0, s.count);//TODO: Implement
-                list.append($.map(posts, function(o) { return '<li>' + t(s.template, o) + '</li>'; }).join('')).
-                  children('li:first').addClass('post_first').end().
-                  children('li:odd').addClass('post_even').end().
-                  children('li:even').addClass('post_odd');
+        $.getJSON('http://'+s.hostname+'/api/read/json?callback=?', s.options, function(response) {
+            var list = $('<ul class="post_list">');
+            var posts = $.map(response.posts, prepare_template_data);
+            //posts = $.grep(posts, s.filter).sort(s.comparator).slice(0, s.count);//TODO: Implement
+            list.append($.map(posts, function(o) { return '<li>' + t(s.template, o) + '</li>'; }).join('')).
+              children('li:first').addClass('post_first').end().
+              children('li:odd').addClass('post_even').end().
+              children('li:even').addClass('post_odd');
 
-                $(widget).empty().append(list);
-                $(widget).trigger('loaded');
+            $(widget).empty().append(list);
+            $(widget).trigger('loaded');
 
-            }
         });
     }
 
