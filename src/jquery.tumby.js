@@ -100,7 +100,6 @@ $.fn.tumby = function(o)
         /**
          * Create body, based on the type_template for that media type
          */
-console.log(o);
         if (typeof s.type_templates[o.type] === 'string')
         {
             // TODO: This code could probably use a refactor???
