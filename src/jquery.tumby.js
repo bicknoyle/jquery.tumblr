@@ -10,9 +10,22 @@
 $.fn.tumby = function(o)
 {
     var s = $.extend({
-        hostname: null,   // [string] The hostname of your blog (ex: fyeahtumby.tumblr.com)
-        options: { },     // [object] key:val of options to pass the tumblr API, see http://www.tumblr.com/docs/en/api/v1#api_read for details
-        template: ''      // [string or function] template used to construct each post <li> - see code for available {vars}
+        hostname: null,         // [string] The hostname of your blog (ex: fyeahtumby.tumblr.com)
+        options: { },           // [object] key:val of options to pass the tumblr API, see http://www.tumblr.com/docs/en/api/v1#api_read for details
+        template: '{body}',     // [string or function] template used to construct each post <li> - see code for available {vars}
+        type_templates: {       // [string or function] template to be used for each type; these defaults are based on the markup used by the default tumblr theme
+            answer:'<div class="question">{question}</div><div class="copy">{answer}</div>',
+            audio: '<div class="audio">{audio_player}</div><div class="copy"></div>',
+            chat:  '<div class="copy">{conversation_text}</div>', // TODO: probably need to do this as a func???
+            link:  function(item) {
+              if( item.link_text ) { return '<div class="link"><a href="{link_url}" target="_blank">{link_text}</a></div><div class="copy">{link_description}</div>' };
+              return '<div class="link"><a href="{link_url}" target="_blank">{link_url}</a></div><div class="copy">{link_description}</div>'
+            },
+            quote:   '<div class="quote">{quote_text}</div><div class="copy">{quote_source}</div>',
+            photo:   '<div class="media"><img src="{photo_url_500}" alt="" /></div><div class="copy">{photo_caption}</div>',
+            text:    '<div class="title">{regular_title}</div><div class="copy">{regular_body}</div>',
+            video:   '<div class="media">{video_player_500}</div><div class="copy">{video_caption}</div>'
+        }
     }, o);
 
     function extract_relative_time(date)
@@ -73,6 +86,11 @@ $.fn.tumby = function(o)
             o[key] = item[i];
         }
 
+        // "text" is referred to by API output as "regular"????
+        if( item.type == 'regular' ) { o.type = 'text'; }
+        // "chat" is referred to by API output as "conversation"????
+        if( item.type == 'conversation' ) { o.type = 'chat'; }
+
         /**
          * Add some custom vars that may be handy for the user
          */
@@ -80,32 +98,18 @@ $.fn.tumby = function(o)
         o.reblog_url = 'http://www.tumblr.com/reblog/'+o.id+'/'+o.reblog_key;
 
         /**
-         * Create body, which is specific by type. This provides a reasonable
-         * "default" var for user when building a template
+         * Create body, based on the type_template for that media type
          */
-        switch( o.type ) {
-            case 'link': {
-                o.body = '<div class="link"><a href="'+o.link_url+'" target="_blank">'+o.link_text+'</a></div>'+o.link_description;
-                break;
-            }
-            case 'photo': {
-                o.body = '<div class="photo"><img src="'+o.photo_url_400+'" alt="" /></div>'+o.photo_caption;
-                break;
-            }
-            case 'quote': {
-                o.body = '<div class="quote">'+o.quote_text+'</div>'+o.quote_source;
-                break;
-            }
-            case 'regular':
-            case 'text': {
-                o.body = '<div class="text">'+o.regular_title+'</div>'+o.regular_body;
-                break;
-            }
-            default: {
-                o.body = '';
-            }
+console.log(o);
+        if (typeof s.type_templates[o.type] === 'string')
+        {
+            // TODO: This code could probably use a refactor???
+            o.body = t(s.type_templates[o.type], o);
         }
-
+        else
+        {
+            o.body = t(s.type_templates[o.type](o), o);
+        }
         return o;
     }
 
