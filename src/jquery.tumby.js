@@ -114,7 +114,6 @@
             {
                 o.body = t(s.type_templates[o.type](o), o);
             }
-    console.log(o);
             return o;
         }
 
