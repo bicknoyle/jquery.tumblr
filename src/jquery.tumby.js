@@ -16,7 +16,11 @@ $.fn.tumby = function(o)
         type_templates: {       // [string or function] template to be used for each type; these defaults are based on the markup used by the default tumblr theme
             answer:'<div class="question">{question}</div><div class="copy">{answer}</div>',
             audio: '<div class="audio">{audio_player}</div><div class="copy"></div>',
-            chat:  '<div class="copy">{conversation_text}</div>', // TODO: probably need to do this as a func???
+            chat:  function(item) {
+              str = '<div class="title">{conversation_title}</div><div class="chat"><div class="lines">';
+              for(i in item.conversation) { str = str+'<div class="line"><strong>'+item.conversation[i].label+'</strong>'+item.conversation[i].phrase+'</div>' };
+              return str+'</div></div>';
+            },
             link:  function(item) {
               if( item.link_text ) { return '<div class="link"><a href="{link_url}" target="_blank">{link_text}</a></div><div class="copy">{link_description}</div>' };
               return '<div class="link"><a href="{link_url}" target="_blank">{link_url}</a></div><div class="copy">{link_description}</div>'
@@ -109,6 +113,7 @@ $.fn.tumby = function(o)
         {
             o.body = t(s.type_templates[o.type](o), o);
         }
+console.log(o);
         return o;
     }
 
