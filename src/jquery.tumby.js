@@ -12,24 +12,28 @@
             hostname: null,         // [string] The hostname of your blog (ex: fyeahtumby.tumblr.com)
             options: { },           // [object] key:val of options to pass the tumblr API, see http://www.tumblr.com/docs/en/api/v1#api_read for details
             template: '{body}',     // [string or function] template used to construct each post <li> - see code for available {vars}
-            type_templates: {       // [string or function] template to be used for each type; these defaults are based on the markup used by the default tumblr theme
-                answer:'<div class="question">{question}</div><div class="copy">{answer}</div>',
-                audio: '<div class="audio">{audio_player}</div><div class="copy"></div>',
-                chat:  function(item) {
-                  str = '<div class="title">{conversation_title}</div><div class="chat"><div class="lines">';
-                  for(i in item.conversation) { str = str+'<div class="line"><strong>'+item.conversation[i].label+'</strong>'+item.conversation[i].phrase+'</div>' };
-                  return str+'</div></div>';
-                },
-                link:  function(item) {
-                  if( item.link_text ) { return '<div class="link"><a href="{link_url}" target="_blank">{link_text}</a></div><div class="copy">{link_description}</div>' };
-                  return '<div class="link"><a href="{link_url}" target="_blank">{link_url}</a></div><div class="copy">{link_description}</div>'
-                },
-                quote:   '<div class="quote">{quote_text}</div><div class="copy">{quote_source}</div>',
-                photo:   '<div class="media"><img src="{photo_url_500}" alt="" /></div><div class="copy">{photo_caption}</div>',
-                text:    '<div class="title">{regular_title}</div><div class="copy">{regular_body}</div>',
-                video:   '<div class="media">{video_player_500}</div><div class="copy">{video_caption}</div>'
-            }
+            type_templates: { }     // [string or function] see below for defaults
         }, o);
+
+        // [string or function] template to be used for each type; these defaults are based on the markup used by the default tumblr theme
+        var default_type_templates = {
+            answer:'<div class="question">{question}</div><div class="copy">{answer}</div>',
+            audio: '<div class="audio">{audio_player}</div><div class="copy"></div>',
+            chat:  function(item) {
+              str = '<div class="title">{conversation_title}</div><div class="chat"><div class="lines">';
+              for(i in item.conversation) { str = str+'<div class="line"><strong>'+item.conversation[i].label+'</strong>'+item.conversation[i].phrase+'</div>' };
+              return str+'</div></div>';
+            },
+            link:  function(item) {
+              if( item.link_text ) { return '<div class="link"><a href="{link_url}" target="_blank">{link_text}</a></div><div class="copy">{link_description}</div>' };
+              return '<div class="link"><a href="{link_url}" target="_blank">{link_url}</a></div><div class="copy">{link_description}</div>'
+            },
+            quote:   '<div class="quote">{quote_text}</div><div class="copy">{quote_source}</div>',
+            photo:   '<div class="media"><img src="{photo_url_500}" alt="" /></div><div class="copy">{photo_caption}</div>',
+            text:    '<div class="title">{regular_title}</div><div class="copy">{regular_body}</div>',
+            video:   '<div class="media">{video_player_500}</div><div class="copy">{video_caption}</div>'
+        };
+        s.type_templates = $.extend( default_type_templates, s.type_templates);
 
         function extract_relative_time(date)
         {
