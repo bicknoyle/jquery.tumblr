@@ -1,10 +1,10 @@
 # tumby
 
-Tumby is a jQuery plugin for embeding Tumblr posts into your website
+Tumby is a jQuery plugin for embedding Tumblr posts into your website
 
 ## Basic Usage
 
-  $('#my-container').tumby({hostname: 'fyeahtumby.tumblr.com'});
+    $('#my-container').tumby({hostname: 'fyeahtumby.tumblr.com'});
 
 ## Credits
 
