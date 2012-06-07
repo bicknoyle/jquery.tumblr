@@ -1,11 +1,9 @@
 /**
- * jquery.tumby.js
+ * jquery.tumby.js - jQuery plugin for embedding tumblr posts
  *
- * Consumes a tumblr feed and places it as HTML on your site, allowing
- * you to make a super customizable tumblr widget for your website.
- *
- * This code is a stripped down port of the fantastic jquery.tweet.js
- * (see: http://tweet.seaofclouds.com/ or https://github.com/seaofclouds/tweet)
+ * https://github.com/bicknoyle/tumby
+ * Copyright (c) 2012 Nick Boyle
+ * MIT Licensed
  */
 (function( $ ) {
     $.fn.tumby = function(o)
