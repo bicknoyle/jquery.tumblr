@@ -1,15 +1,15 @@
 /**
- * jquery.tumby.js - jQuery plugin for embedding tumblr posts
+ * jquery.tumblr.js - jQuery plugin for embedding tumblr posts
  *
- * https://github.com/bicknoyle/tumby
+ * https://github.com/bicknoyle/jquery.tumblr
  * Copyright (c) 2012 Nick Boyle
  * MIT Licensed
  */
 (function( $ ) {
-    $.fn.tumby = function(o)
+    $.fn.tumblr = function(o)
     {
         var s = $.extend({
-            hostname: null,         // [string] The hostname of your blog (ex: fyeahtumby.tumblr.com)
+            hostname: null,         // [string] The hostname of your blog (ex: myblog.tumblr.com)
             options: { },           // [object] key:val of options to pass the tumblr API, see http://www.tumblr.com/docs/en/api/v1#api_read for details
             template: '{body}',     // [string or function] template used to construct each post <li> - see code for available {vars}
             type_templates: { }     // [string or function] see below for defaults
@@ -134,13 +134,13 @@
             } else return template(info);//template can be a function too!
         }
         // Export the t function for use when passing a function as the 'template' option
-        $.extend({tumby: {t: t}});
+        $.extend({tumblr: {t: t}});
 
         return this.each(function(i, widget)
         {
-            $(widget).unbind('tumby:load').bind('tumby:load', function(){
+            $(widget).unbind('tumblr:load').bind('tumblr:load', function(){
                 load(widget);
-            }).trigger('tumby:load');
+            }).trigger('tumblr:load');
         });
     }
 })( jQuery );
