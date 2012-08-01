@@ -9,6 +9,7 @@
     $.fn.tumblr = function(o)
     {
         var s = $.extend({
+            append: false,          // [bool] Append to target container, instead of clearing first
             hostname: null,         // [string] The hostname of your blog (ex: myblog.tumblr.com)
             options: { },           // [object] key:val of options to pass the tumblr API, see http://www.tumblr.com/docs/en/api/v1#api_read for details
             template: '{body}',     // [string or function] template used to construct each post <li> - see code for available {vars}
@@ -71,8 +72,10 @@
                   children('li:odd').addClass('post_even').end().
                   children('li:even').addClass('post_odd');
 
-                $(widget).empty().append(list);
-                $(widget).trigger('loaded');
+                if( !s.append ) {
+                  $(widget).empty()
+                }
+                $(widget).append(list).trigger('loaded');
 
             });
         }
