@@ -61,25 +61,6 @@
             return 'just now';
         }
 
-        function load(widget)
-        {
-            $.getJSON('http://'+s.hostname+'/api/read/json?callback=?', s.options, function(response) {
-                var list = $('<ul class="post_list">');
-                var posts = $.map(response.posts, prepare_template_data);
-                //posts = $.grep(posts, s.filter).sort(s.comparator).slice(0, s.count);//TODO: Implement
-                list.append($.map(posts, function(o) { return '<li>' + t(s.template, o) + '</li>'; }).join('')).
-                  children('li:first').addClass('post_first').end().
-                  children('li:odd').addClass('post_even').end().
-                  children('li:even').addClass('post_odd');
-
-                if( !s.append ) {
-                  $(widget).empty()
-                }
-                $(widget).append(list).trigger('loaded');
-
-            });
-        }
-
         /**
          * Prepare the data for each posts, for use by the user in the template
          */
@@ -133,11 +114,23 @@
         // Export the t function for use when passing a function as the 'template' option
         $.extend({tumblr: {t: t}});
 
-        return this.each(function(i, widget)
-        {
-            $(widget).unbind('tumblr:load').bind('tumblr:load', function(){
-                load(widget);
-            }).trigger('tumblr:load');
+        /**
+         * Get data from tumblr, listify it, and load it into the widget
+         */
+        var target_selector = this;
+        $.getJSON('http://'+s.hostname+'/api/read/json?callback=?', s.options, function(response) {
+            var list = $('<ul class="post_list">');
+            var posts = $.map(response.posts, prepare_template_data);
+            //posts = $.grep(posts, s.filter).sort(s.comparator).slice(0, s.count);//TODO: Implement
+            list.append($.map(posts, function(o) { return '<li>' + t(s.template, o) + '</li>'; }).join('')).
+              children('li:first').addClass('post_first').end().
+              children('li:odd').addClass('post_even').end().
+              children('li:even').addClass('post_odd');
+            if( !s.append ) {
+                target_selector.empty()
+            }
+            target_selector.append(list).trigger('tumblr:load');
         });
+        return target_selector;
     }
 })( jQuery );
