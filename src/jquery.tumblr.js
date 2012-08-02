@@ -12,7 +12,7 @@
             append: false,          // [bool] Append to target container, instead of clearing first
             hostname: null,         // [string] The hostname of your blog (ex: myblog.tumblr.com)
             options: { },           // [object] key:val of options to pass the tumblr API, see http://www.tumblr.com/docs/en/api/v1#api_read for details
-            template: '{body}',     // [string or function] template used to construct each post <li> - see code for available {vars}
+            template:'{body}',      // [string or function] template used to construct each post <li> - see code for available {vars}
             type_templates: { }     // [string or function] see below for defaults
         }, o);
 
@@ -34,7 +34,7 @@
             text:    '<div class="title">{regular_title}</div><div class="copy">{regular_body}</div>',
             video:   '<div class="media">{video_player_500}</div><div class="copy">{video_caption}</div>'
         };
-        s.type_templates = $.extend( default_type_templates, s.type_templates);
+        s.type_templates = $.extend(default_type_templates, s.type_templates);
 
         function extract_relative_time(date)
         {
@@ -90,11 +90,10 @@
             /**
              * Change keys from two-words to two_words
              */
-            for(i in item)
-            {
-                key = i.replace(new RegExp('-','g'), '_');
-                o[key] = item[i];
-            }
+            var key_regex = new RegExp('-','g');
+            $.each(item, function(key,val) {
+                o[key.replace(key_regex, '_')] = val;
+            });
 
             // "text" is referred to by API output as "regular"????
             if( item.type == 'regular' ) { o.type = 'text'; }
@@ -108,33 +107,28 @@
             o.reblog_url = 'http://www.tumblr.com/reblog/'+o.id+'/'+o.reblog_key;
 
             /**
-             * Create body, based on the type_template for that media type
+             * Create body, based on the type_template for that
+             * media type.
              */
-            if (typeof s.type_templates[o.type] === 'string')
-            {
-                // TODO: This code could probably use a refactor???
-                o.body = t(s.type_templates[o.type], o);
-            }
-            else
-            {
-                o.body = t(s.type_templates[o.type](o), o);
-            }
+            o.body = t(s.type_templates[o.type], o);
             return o;
         }
 
         // Expand values inside simple string templates with {placeholders}
-        function t(template, info)
-        {
-            if (typeof template === 'string')
-            {
-                var result = template;
-                for(var key in info)
-                {
-                    var val = info[key];
-                    result = result.replace(new RegExp('{'+key+'}','g'), val === null ? '' : val);
-                }
-                return result;
-            } else return template(info);//template can be a function too!
+        function t(template, info) {
+            var result;
+            if ( typeof template === 'string' || typeof template === 'number' ) {
+                result = template;
+            }
+            else {
+                result = template(info);
+            }
+
+
+            $.each(info, function(key, val) {
+                result = result.replace(new RegExp('{'+key+'}','g'), val === null ? '' : val);
+            });
+            return result;
         }
         // Export the t function for use when passing a function as the 'template' option
         $.extend({tumblr: {t: t}});
