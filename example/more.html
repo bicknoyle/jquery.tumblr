@@ -3,13 +3,20 @@
     <script language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
     <script language="javascript" src="../src/jquery.tumblr.js" type="text/javascript"></script>
     <script language="javascript">
-        var current_offset = 0, limit = 1,
+        var current_offset = 0, limit = 3,
         load_incrementally = function() {
           $('#posts_container').tumblr({ hostname: 'bicknoyle.tumblr.com', append: true, options:{start:current_offset, num: limit} });
           current_offset=current_offset+limit;
         }
 
         $(document).ready(function() {
+          // remove the Show More... if no more posts found
+          $('#posts_container').bind('tumblr:load', function() {
+            if( $('#posts_container ul.post_list li').length < current_offset ) {
+                $('a.more').remove()
+            }
+          });
+
           load_incrementally();
           $('a.more').click(load_incrementally);
         });
